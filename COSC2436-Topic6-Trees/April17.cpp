@@ -12,7 +12,7 @@ using namespace MySpace::DataStructs::Trees;
 int main()
 {
     auto inorderTreeRoot = generateInorderTree(); 
-    cout << inorderTreeRoot->nodeValue << endl; 
+    //cout << inorderTreeRoot->nodeValue << endl; 
 
     inorderTraverse(inorderTreeRoot); 
 
