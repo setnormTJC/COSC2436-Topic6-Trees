@@ -1,5 +1,6 @@
 #include <iostream>
 #include <queue>
+#include <stack>
 
 //#include"C:/Users/Work/Downloads/TreeNode-1.h"
 
@@ -10,7 +11,7 @@ class TreeNode
 public:
     //member vars:
     T nodeValue;
-    TreeNode<T>* left, * right;
+    TreeNode<T>* left, * right; //not an N-ary 
 
     //general tree could be made by using a VECTOR of childrenLinks: 
     //vector<TreeNode<T>*> childrenLinks; 
@@ -34,8 +35,7 @@ public:
         //if (this)
     }
 
-
-
+    //add a number of additional functions
 
 }; //end TreeNode class def. 
 
@@ -97,17 +97,20 @@ TreeNode<char>* generateArithmeticExpressionTree()
     return root; 
 }
 
-void inorderTraverse(TreeNode<char>* root)
+template<typename T> 
+void inorderTraverse(TreeNode<T>* root)
 {
     if (root != nullptr) //base case 
     {
-        inorderTraverse(root->left); //recursion!
+
+        inorderTraverse(root->right);
+
         
         cout << root->nodeValue << " "; //omitting endl
         
-       inorderTraverse(root->right);
+        inorderTraverse(root->left); //recursion!
 
-       //LNR -> "inorder" (BST) 
+
 
 
     }
@@ -120,6 +123,7 @@ void inorderTraverse(TreeNode<char>* root)
            /  \   / 
           4    5 6  
 */
+
 TreeNode<int>* generateLevelOrderTree()
 {
     //level (depth) 0 node 
@@ -140,45 +144,145 @@ TreeNode<int>* generateLevelOrderTree()
 
 }
 
-
-void levelOrderTraverse(TreeNode<int>* root)
+template <typename T> 
+void levelOrderTraverse(TreeNode<T>* root)
 {
-    std::queue<TreeNode<int>*> treeNodeQueue;
+    std::queue<TreeNode<T>*> treeNodeQueue;
 
     treeNodeQueue.push(root);
 
     while (!treeNodeQueue.empty())
     {
-        TreeNode<int>* current;
+        TreeNode<T>* current;
         current = treeNodeQueue.front();
         cout << current->nodeValue << endl;
         treeNodeQueue.pop();
 
+        if (current->right != nullptr)//switch left and right, if desired
+        {
+            treeNodeQueue.push(current->right);
+        }
 
         if (current->left != nullptr)
         {
             treeNodeQueue.push(current->left);
         }
-        if (current->right != nullptr)//switch left and right, if desired
-        {
-            treeNodeQueue.push(current->right);
-        }
+
     }
 
     //2^ 32 = 4 GB
 
+}
 
+//template<typename T>  //be wary of templates in C++
+int getLeafCount(TreeNode<char>* root)
+{
+    if (root == nullptr)
+    {
+        return 0;
+    }
+
+    int leafCount = 0;
+
+    //not using a queue (as we did for the levelOrderTraverse) 
+    std::stack<TreeNode<char>*> nodeStack;
+    nodeStack.push(root);
+
+    while (!nodeStack.empty())
+    {
+        TreeNode<char>* current = nodeStack.top();
+        nodeStack.pop();
+
+        if (current->left != nullptr)
+        {
+            nodeStack.push(current->left);
+        }
+
+        if (current->right != nullptr)
+        {
+            nodeStack.push(current->right);
+        }
+
+        if (current->isLeaf())
+        {
+            leafCount++;
+        }
+    } //end while not empty stack
+
+    return leafCount;
+} //end getLeafCount()
+
+template<typename T> 
+int getNodeLevel(TreeNode<T>* root, T targetValue, int level)
+{
+    if (root == nullptr)
+    {
+        return -1;
+    }
+    if (root->nodeValue == targetValue)
+    {
+        return level;
+    }
+
+    int leftLevel = getNodeLevel(root->left, targetValue, level + 1);
+    int rightLevel = getNodeLevel(root->right, targetValue, level + 1);
+    if (leftLevel == -1)
+    {
+        return rightLevel;
+    }
+    else
+    {
+        return leftLevel;
+    }
+}
+
+template<typename T> 
+TreeNode<T>* insertBSTNode(TreeNode<T>* root, T insertedValue)
+{
+    if (root == nullptr) //the base case
+    {
+        root = new TreeNode<T>(insertedValue);
+    }
+    //function def concludes on next slide
+    else if (insertedValue < root->nodeValue)
+    {
+        //recursive call:
+        root->left = insertBSTNode(root->left, insertedValue);
+    }
+    else
+    {
+        root->right = insertBSTNode(root->right, insertedValue);
+    }
+    return root;
 }
 
 int main()
 {
 
 
-    auto root = generateArithmeticExpressionTree(); 
+    TreeNode<int>* bstRoot = new TreeNode<int>(8);
 
-    cout << std::boolalpha; 
-    cout << root->isLeaf() << endl; //false
+    insertBSTNode(bstRoot, 6);
+    insertBSTNode(bstRoot, 7);
 
+    insertBSTNode(bstRoot, 5);
+    insertBSTNode(bstRoot, 3);
+    insertBSTNode(bstRoot, 0);
+    insertBSTNode(bstRoot, 9);
+
+    //levelOrderTraverse(bstRoot); 
+    inorderTraverse(bstRoot); //prints the in order !
+    //int targetInt = 0; 
+    //cout << "\n\nWhat level is this value " << targetInt << " at? "
+    //    << getNodeLevel(bstRoot, targetInt, 0) << endl; 
+
+
+    //auto root = generateFirstExampleTree(); 
+    //(a-b) / (c + d) 
+    //cout << std::boolalpha; 
+    //cout << root->isLeaf() << endl; //false
+    //cout << "The number of leaves (leafs) in the tree is: "
+    //    << getLeafCount(root) << endl; 
     //auto root = generateLevelOrderTree(); 
     //levelOrderTraverse(root); 
     
@@ -186,11 +290,12 @@ int main()
     
     //Node<T>* current = front; 
 
-    inorderTraverse(root); 
-    
+    //inorderTraverse(root); 
+    //levelOrderTraverse(root); 
+
     //levelOrderTraverse(root); 
     //cout << root->isLeaf() << endl; 
-    cout << "HERE!" << root->left->left->isLeaf() << endl;
+    //cout << "HERE!" << root->left->left->isLeaf() << endl;
     //TreeNode<int>* current = root; 
 
 

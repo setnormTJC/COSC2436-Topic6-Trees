@@ -4,6 +4,11 @@
 #include"C:/Users/Work/Downloads/TreeNode.h"
 #include"C:/Users/Work/Downloads/someTestTrees.h"
 
+#include<xtree>
+
+#include<map>
+
+
 using namespace std;
 
 
@@ -11,10 +16,38 @@ using namespace MySpace::DataStructs::Trees;
 
 int main()
 {
-    auto inorderTreeRoot = generateInorderTree(); 
-    //cout << inorderTreeRoot->nodeValue << endl; 
+    srand(time(0)); 
 
-    inorderTraverse(inorderTreeRoot); 
+    
+    TreeNode<int>* rootOfBST = new TreeNode<int>(8);
+
+    insertBSTNode(rootOfBST, 6);
+    insertBSTNode(rootOfBST, 7);
+    insertBSTNode(rootOfBST, 5);
+    insertBSTNode(rootOfBST, 3);
+    insertBSTNode(rootOfBST, 0);
+    insertBSTNode(rootOfBST, 9);
+
+    levelOrderTraverse(rootOfBST); 
+
+
+
+    //auto inorderTreeRoot = generateInorderTree(); 
+    ////cout << inorderTreeRoot->nodeValue << endl; 
+
+    //inorderTraverse(inorderTreeRoot); //DFT
+
+    //cout << "\n\nNumber of leafs (leaves) is: "
+    //    << getLeafCount(inorderTreeRoot) << endl; 
+    //char searchChar = 'b'; 
+    //cout << "\n\nThe level of the character " << searchChar <<
+    //    "in the tree is: " << getNodeLevel(inorderTreeRoot, searchChar,
+    //        0); 
+
+    //5? 
+
+    //int levelOfA = getNodeLevel(inorderTreeRoot, 'z', 0); 
+    //cout << "\nLevel of 'c': " << levelOfA << endl; 
 
     //TreeNode<int> tree(1); 
     //tree.left = new TreeNode<int>(2); //be careful of "naked new" (a new that doesn't have a delete) 
